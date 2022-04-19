@@ -57,9 +57,8 @@ contains
 
         if (c_associated(return_value)) then
             call tcl_set_obj_result(interp, return_value)
+            re2c_cmd = TCL_OK
         end if
-
-        re2c_cmd = TCL_OK
     end function re2c_cmd
 end module tcl_ext
 

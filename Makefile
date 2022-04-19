@@ -53,7 +53,7 @@ examples: $(CONFIG) $(DICT) $(EVAL) $(FS) $(LIBRARY) $(LINK) $(NAMESPACE) $(RE2C
 # INTERFACE LIBRARIES
 # ==============================================================================
 $(LIBFTCL86):
-	$(FC) -fPIC $(CFLAGS) $(LDFLAGS) -c src/macro.c
+	$(CC) -fPIC $(CFLAGS) $(LDFLAGS) -c src/macro.c
 	$(FC) -fPIC $(FFLAGS) -c src/tcl.f90
 	$(AR) $(ARFLAGS) $(LIBFTCL86) macro.o tcl.o
 
