@@ -357,7 +357,6 @@
 | `Tcl_InitStubs`                     | ✓     |
 | `Tcl_InputBlocked`                  | –     |
 | `Tcl_InputBuffered`                 | –     |
-| `Tcl_Interp`                        | –     |
 | `Tcl_InterpActive`                  | ✓     |
 | `Tcl_InterpDeleted`                 | ✓     |
 | `Tcl_InvalidateStringRep`           | –     |

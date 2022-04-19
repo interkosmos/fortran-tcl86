@@ -1,6 +1,6 @@
 ! link.f90
 !
-! Example program that links a Tcl variable with a Fortran variable.
+! Example program that links a Fortran variable to a Tcl variable.
 !
 ! Author:  Philipp Engel
 ! Licence: ISC

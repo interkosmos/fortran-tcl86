@@ -1974,6 +1974,7 @@ module tcl
         ! void Tcl_GetTime(Tcl_Time *timeBuf)
         subroutine tcl_get_time(time_buf) bind(c, name='Tcl_GetTime')
             import :: tcl_time
+            implicit none
             type(tcl_time), intent(out) :: time_buf
         end subroutine tcl_get_time
 

@@ -27,7 +27,6 @@ contains
         !! Provides the Tcl extension `re2c`.
         !!
         !! Converting a temperature value from Re to C in Tcl:
-        !!
         !! ```
         !! % puts [re2c 30.0]
         !! 37.5
@@ -89,10 +88,7 @@ program main
 
     ! Create Tcl interpreter.
     interp = tcl_create_interp()
-
-    if (.not. c_associated(interp)) then
-        stop 'Error: Tcl_CreateInterp() failed'
-    end if
+    if (.not. c_associated(interp)) stop 'Error: Tcl_CreateInterp() failed'
 
     ! Initialise Tcl.
     if (tcl_init(interp) /= TCL_OK) then

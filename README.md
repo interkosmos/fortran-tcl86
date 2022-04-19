@@ -1,4 +1,4 @@
-# Tcl/Tk 8.6 for Fortran 2018
+# fortran-tcl86 – Tcl/Tk 8.6 for Fortran 2018
 A work-in-progress Fortran 2018 ISO_C_BINDING interface library for
 interoperability with Tcl/Tk 8.6. This library allows you
 
@@ -94,7 +94,47 @@ Again, the include and library search paths for Tcl 8.6 and Tk 8.6, as well as
 the names of the libraries depend on the operating system and may differ (for
 instance, `-ltk8.6 -ltcl8.6` on Linux).
 
-## Examples
+## Example
+The following basic example just invokes the Tcl interpreter from Fortran to
+evaluate a character string:
+
+```fortran
+! example.f90
+program main
+    use, intrinsic :: iso_c_binding, only: c_associated, c_ptr
+    use :: tcl
+    implicit none (type, external)
+
+    integer     :: rc
+    type(c_ptr) :: interp
+
+    ! Create Tcl interpreter.
+    interp = tcl_create_interp()
+    if (.not. c_associated(interp)) stop 'Error: Tcl_CreateInterp() failed'
+
+    ! Evaluate string as Tcl command.
+    rc = tcl_eval_ex(interp, 'puts "Hello, from Tcl!"')
+    if (rc /= TCL_OK) print '("Error: Tcl_EvalEx failed")'
+
+    ! Delete Tcl interpreter.
+    call tcl_delete_interp(interp)
+end program main
+```
+
+Compile and link the example with:
+
+```
+$ gfortran -I/usr/local/include/tcl8.6/ -L/usr/local/lib/tcl8.6/ \
+  -o example.f90 libftcl86.a -ltcl86
+$ ./example
+Hello, from Tcl!
+```
+
+On Linux, point `-I` to the directory of the Tcl header files, `-L` to the
+directory of the library files, and change `-ltcl86` to `-ltcl8.6`. On Microsoft
+Windows, link against `tcl86.dll` instead.
+
+## Further Examples
 The following example programs are provided:
 
 * **config** – Uses Tcl as a configuration file format (run `config`).
