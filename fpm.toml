@@ -1,0 +1,11 @@
+name = "fortran-tcl86"
+version = "0.1.0"
+license = "ISC"
+author = "Philipp Engel"
+maintainer = "@interkosmos"
+copyright = "Copyright (c) 2022, Philipp Engel"
+description = "Fortran 2018 ISO C binding interfaces to Tcl/Tk 8.6"
+keywords = [ "tcl", "tk" ]
+
+[library]
+source-dir = "src"

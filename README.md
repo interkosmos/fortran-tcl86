@@ -55,6 +55,17 @@ the settings:
 $ make CC=icc FC=ifort
 ```
 
+Furthermore, it is possible to build a single static library `libfortran-tcl86.a`
+with [fpm](https://github.com/fortran-lang/fpm):
+
+```
+$ fpm build --profile=release --c-flag="-I/usr/local/include/tcl8.6/ -L/usr/local/lib/tcl8.6/"
+```
+
+The include and library search paths have to point to the correct directories.
+Link against `libfortran-tcl86.a` instead of  `libftcl86.a`, `libftclstub86.a`,
+and `libftk86.a`.
+
 ## Linking Tcl & Tk
 Linking depends on whether Fortran is called from Tcl or Tcl from Fortran.  To
 build a Fortran program in `example.f90` that invokes the Tcl interpreter, link
