@@ -10,18 +10,16 @@ AR = ar
 # ==============================================================================
 # COMPILER, LINKER, AND ARCHIVER FLAGS
 # ==============================================================================
-CFLAGS  = -Wall
-FFLAGS  = -Wall -Wno-unused-dummy-argument -std=f2018 -fmax-errors=1
+CFLAGS  = -Wall `pkg-config --cflags tk86`
+FFLAGS  = -Wall -Wno-unused-dummy-argument `pkg-config --cflags tk86`
 ARFLAGS = rcs
-LDFLAGS = -I/usr/local/include/tcl8.6/ -I/usr/local/include/tk8.6/ \
-          -L/usr/local/lib/tcl8.6/ -L/usr/local/lib/tk8.6/
+LDFLAGS = `pkg-config --libs-only-L tk86`
 
 # ==============================================================================
 # TCL AND TK LIBRARIES TO LINK
 # ==============================================================================
-LIBTCL86     = -ltcl86
-LIBTCLSTUB86 = -ltclstub86
-LIBTK86      = -ltk86
+LIBTCL86 = `pkg-config --libs-only-l tcl86`
+LIBTK86  = `pkg-config --libs-only-l tk86`
 
 # ==============================================================================
 # FORTRAN LIBRARIES
@@ -53,9 +51,9 @@ examples: $(CONFIG) $(DICT) $(EVAL) $(FS) $(LIBRARY) $(LINK) $(NAMESPACE) $(RE2C
 # INTERFACE LIBRARIES
 # ==============================================================================
 $(LIBFTCL86):
-	$(CC) -fPIC $(CFLAGS) $(LDFLAGS) -c src/macro.c
+	$(CC) -fPIC $(CFLAGS) $(LDFLAGS) -c src/tcl_macro.c
 	$(FC) -fPIC $(FFLAGS) -c src/tcl.f90
-	$(AR) $(ARFLAGS) $(LIBFTCL86) macro.o tcl.o
+	$(AR) $(ARFLAGS) $(LIBFTCL86) tcl_macro.o tcl.o
 
 $(LIBFTCLSTUB86):
 	$(FC) -fPIC $(FFLAGS) -c src/tcl_stub.f90
@@ -81,16 +79,16 @@ $(FS): $(LIBFTCL86)
 	$(FC) $(FFLAGS) $(LDFLAGS) -o $(FS) examples/fs/fs.f90 $(LIBFTCL86) $(LIBTCL86)
 
 $(LIBRARY): $(LIBFTCL86) $(LIBFTCLSTUB86)
-	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(LIBRARY) examples/library/hello.f90 $(LIBFTCL86) $(LIBFTCLSTUB86) $(LIBTCLSTUB86)
+	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(LIBRARY) examples/library/hello.f90 $(LIBFTCL86) $(LIBFTCLSTUB86)
 
 $(LINK): $(LIBFTCL86)
 	$(FC) $(FFLAGS) $(LDFLAGS) -o $(LINK) examples/link/link.f90 $(LIBFTCL86) $(LIBTCL86)
 
 $(NAMESPACE): $(LIBFTCL86) $(LIBFTCLSTUB86)
-	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(NAMESPACE) examples/namespace/fortran.f90 $(LIBFTCL86) $(LIBFTCLSTUB86) $(LIBTCLSTUB86)
+	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(NAMESPACE) examples/namespace/fortran.f90 $(LIBFTCL86) $(LIBFTCLSTUB86)
 
 $(RE2C): $(LIBFTCL86) $(LIBFTK86)
-	$(FC) -DUSE_TK_STUBS $(FFLAGS) $(LDFLAGS) -o $(RE2C) examples/re2c/re2c.f90 $(LIBFTCL86) $(LIBFTK86) $(LIBTCL86) $(LIBTK86)
+	$(FC) -DUSE_TK_STUBS $(FFLAGS) $(LDFLAGS) -o $(RE2C) examples/re2c/re2c.f90 $(LIBFTCL86) $(LIBFTK86) $(LIBTK86)
 
 # ==============================================================================
 # CLEAN-UP

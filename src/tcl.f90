@@ -129,6 +129,7 @@ module tcl
     public :: tcl_fs_unregister
     public :: tcl_fs_utime
     public :: tcl_get_access_time_from_stat
+    public :: tcl_get_byte_array_from_obj
     public :: tcl_get_block_size_from_stat
     public :: tcl_get_blocks_from_stat
     public :: tcl_get_boolean
@@ -201,11 +202,13 @@ module tcl
     public :: tcl_list_obj_length
     public :: tcl_list_obj_replace
     public :: tcl_make_safe
+    public :: tcl_new_byte_array_obj
     public :: tcl_new_dict_obj
     public :: tcl_new_double_obj
     public :: tcl_new_int_obj
     public :: tcl_new_list_obj
     public :: tcl_new_long_obj
+    public :: tcl_new_obj
     public :: tcl_new_string_obj
     public :: tcl_new_string_obj_
     public :: tcl_new_wide_int_obj
@@ -218,6 +221,8 @@ module tcl
     public :: tcl_scan_counted_element
     public :: tcl_scan_element
     public :: tcl_scan_element_
+    public :: tcl_set_byte_array_obj
+    public :: tcl_set_byte_array_length
     public :: tcl_set_boolean_obj
     public :: tcl_set_boolean_obj_
     public :: tcl_set_double_obj
@@ -251,6 +256,12 @@ module tcl
     public :: tcl_up_var2_
     public :: tcl_wrong_num_args
     public :: tcl_wrong_num_args_
+    public :: tcl_zlib_adler32
+    public :: tcl_zlib_crc32
+    public :: tcl_zlib_deflate
+    public :: tcl_zlib_inflate
+    public :: tcl_zlib_stream_get
+    public :: tcl_zlib_stream_init
 
     private :: copy
     private :: c_f_str_ptr
@@ -1243,6 +1254,15 @@ module tcl
             integer(kind=tcl_wide_int)     :: tcl_get_access_time_from_stat
         end function tcl_get_access_time_from_stat
 
+        ! unsigned char *Tcl_GetByteArrayFromObj(Tcl_Obj *objPtr, int *lengthPtr)
+        function tcl_get_byte_array_from_obj(obj_ptr, length_ptr) bind(c, name='Tcl_GetByteArrayFromObj')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: obj_ptr
+            integer(kind=c_int), intent(out)       :: length_ptr
+            type(c_ptr)                            :: tcl_get_byte_array_from_obj
+        end function tcl_get_byte_array_from_obj
+
         ! unsigned Tcl_GetBlockSizeFromStat(Tcl_StatBuf *statPtr)
         function tcl_get_block_size_from_stat(stat_ptr) bind(c, name='Tcl_GetBlockSizeFromStat')
             import :: c_ptr, c_unsigned_int
@@ -1676,6 +1696,15 @@ module tcl
             type(c_ptr) :: tcl_new_dict_obj
         end function tcl_new_dict_obj
 
+        ! Tcl_Obj *Tcl_NewByteArrayObj(const unsigned char *bytes, int length)
+        function tcl_new_byte_array_obj(bytes, length) bind(c, name='Tcl_NewByteArrayObj')
+            import :: c_char, c_int, c_ptr
+            implicit none
+            character(kind=c_char), intent(in)        :: bytes
+            integer(kind=c_int),    intent(in), value :: length
+            type(c_ptr)                               :: tcl_new_byte_array_obj
+        end function tcl_new_byte_array_obj
+
         ! Tcl_Obj *Tcl_NewDoubleObj(double *doubleValue)
         function tcl_new_double_obj(double_value) bind(c, name='Tcl_NewDoubleObj')
             import :: c_double, c_ptr
@@ -1708,6 +1737,13 @@ module tcl
             integer(kind=c_long), intent(in) :: long_value
             type(c_ptr)                      :: tcl_new_long_obj
         end function tcl_new_long_obj
+
+        ! Tcl_Obj *Tcl_NewObj()
+        function tcl_new_obj() bind(c, name='Tcl_NewObj')
+            import :: c_ptr
+            implicit none
+            type(c_ptr) :: tcl_new_obj
+        end function tcl_new_obj
 
         ! Tcl_Obj *Tcl_NewStringObj(const char *bytes, int length)
         function tcl_new_string_obj_(bytes, length) bind(c, name='Tcl_NewStringObj')
@@ -1764,6 +1800,15 @@ module tcl
             integer(kind=c_int),    intent(out) :: flags_ptr
             integer(kind=c_int)                 :: tcl_scan_element_
         end function tcl_scan_element_
+
+        ! unsigned char *Tcl_SetByteArrayLength(Tcl_Obj *objPtr, int length)
+        function tcl_set_byte_array_length(obj_ptr, length) bind(c, name='Tcl_SetByteArrayLength')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: obj_ptr
+            integer(kind=c_int), intent(in), value :: length
+            type(c_ptr)                            :: tcl_set_byte_array_length
+        end function tcl_set_byte_array_length
 
         ! const char *Tcl_SetVar(Tcl_Interp *interp, const char *varName, const char *newValue, int flags)
         function tcl_set_var_(interp, var_name, new_value, flags) bind(c, name='Tcl_SetVar')
@@ -1865,16 +1910,78 @@ module tcl
             integer(kind=c_int)                       :: tcl_up_var2_
         end function tcl_up_var2_
 
-        ! unsigned int Tcl_ZlibAdler32(unsigned int adler, const unsigned char *buf, int len)
-        ! unsigned int Tcl_ZlibCRC32(unsigned int crc, const unsigned char *buf, int len)
-        ! int Tcl_ZlibDeflate(Tcl_Interp *interp, int format, Tcl_Obj *data, int level, Tcl_Obj *gzipHeaderDictObj)
-        ! int Tcl_ZlibInflate(Tcl_Interp *interp, int format, Tcl_Obj *data, int buffersize, Tcl_Obj *gzipHeaderDictObj)
+        ! unsigned int Tcl_ZlibAdler32(int initValue, unsigned char *bytes, int length)
+        function tcl_zlib_adler32(init_value, bytes, length) bind(c, name='Tcl_ZlibAdler32')
+            import :: c_int, c_ptr
+            implicit none
+            integer(kind=c_int), intent(in), value :: init_value
+            type(c_ptr),         intent(in), value :: bytes
+            integer(kind=c_int), intent(in), value :: length
+            integer(kind=c_int)                    :: tcl_zlib_adler32
+        end function tcl_zlib_adler32
+
+        ! unsigned int Tcl_ZlibCRC32(int initValue, unsigned char *bytes, int length)
+        function tcl_zlib_crc32(init_value, bytes, length) bind(c, name='Tcl_ZlibCRC32')
+            import :: c_int, c_ptr
+            implicit none
+            integer(kind=c_int), intent(in), value :: init_value
+            type(c_ptr),         intent(in), value :: bytes
+            integer(kind=c_int), intent(in), value :: length
+            integer(kind=c_int)                    :: tcl_zlib_crc32
+        end function tcl_zlib_crc32
+
+        ! int Tcl_ZlibDeflate(Tcl_Interp *interp, int format, Tcl_Obj *dataObj, int level, Tcl_Obj *dictObj)
+        function tcl_zlib_deflate(interp, format, data_obj, level, dict_obj) bind(c, name='Tcl_ZlibDeflate')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: interp
+            integer(kind=c_int), intent(in), value :: format
+            type(c_ptr),         intent(in), value :: data_obj
+            integer(kind=c_int), intent(in), value :: level
+            type(c_ptr),         intent(in), value :: dict_obj
+            integer(kind=c_int)                    :: tcl_zlib_deflate
+        end function tcl_zlib_deflate
+
+        ! int Tcl_ZlibInflate(Tcl_Interp *interp, int format, Tcl_Obj *dataObj, Tcl_Obj *dictObj)
+        function tcl_zlib_inflate(interp, format, data_obj, dict_obj) bind(c, name='Tcl_ZlibInflate')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: interp
+            integer(kind=c_int), intent(in), value :: format
+            type(c_ptr),         intent(in), value :: data_obj
+            type(c_ptr),         intent(in), value :: dict_obj
+            integer(kind=c_int)                    :: tcl_zlib_inflate
+        end function tcl_zlib_inflate
+
         ! int Tcl_ZlibStreamChecksum(Tcl_ZlibStream zshandle)
         ! int Tcl_ZlibStreamClose(Tcl_ZlibStream zshandle)
         ! int Tcl_ZlibStreamEof(Tcl_ZlibStream zshandle)
+
         ! int Tcl_ZlibStreamGet(Tcl_ZlibStream zshandle, Tcl_Obj *data, int count)
+        function tcl_zlib_stream_get(zhandle, data, count) bind(c, name='Tcl_ZlibStreamGet')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: zhandle
+            type(c_ptr),         intent(in), value :: data
+            integer(kind=c_int), intent(in), value :: count
+            integer(kind=c_int)                    :: tcl_zlib_stream_get
+        end function tcl_zlib_stream_get
+
         ! Tcl_Obj *Tcl_ZlibStreamGetCommandName(Tcl_ZlibStream zshandle)
+
         ! int Tcl_ZlibStreamInit(Tcl_Interp *interp, int mode, int format, int level, Tcl_Obj *dictObj, Tcl_ZlibStream *zshandle)
+        function tcl_zlib_stream_init(interp, mode, format, level, dict_obj, zhandle) bind(c, name='Tcl_ZlibStreamInit')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: interp
+            integer(kind=c_int), intent(in), value :: mode
+            integer(kind=c_int), intent(in), value :: format
+            integer(kind=c_int), intent(in), value :: level
+            type(c_ptr),         intent(in), value :: dict_obj
+            type(c_ptr),         intent(in), value :: zhandle
+            integer(kind=c_int)                    :: tcl_zlib_stream_init
+        end function tcl_zlib_stream_init
+
         ! int Tcl_ZlibStreamPut(Tcl_ZlibStream zshandle, Tcl_Obj *data, int flush)
         ! int Tcl_ZlibStreamReset(Tcl_ZlibStream zshandle)
 
@@ -2013,6 +2120,15 @@ module tcl
             type(c_ptr), intent(in), value :: client_data
         end subroutine tcl_release
 
+        ! void Tcl_SetByteArrayObj(Tcl_Obj *objPtr, const unsigned char *bytes, int length)
+        subroutine tcl_set_byte_array_obj(obj_ptr, bytes, length) bind(c, name='Tcl_SetByteArrayObj')
+            import :: c_char, c_int, c_ptr
+            implicit none
+            type(c_ptr),            intent(in), value :: obj_ptr
+            character(kind=c_char), intent(in)        :: bytes
+            integer(kind=c_int),    intent(in), value :: length
+        end subroutine tcl_set_byte_array_obj
+
         ! void *Tcl_SetBooleanObj(Tcl_Obj *objPtr, int boolValue)
         subroutine tcl_set_boolean_obj_(obj_ptr, bool_value) bind(c, name='Tcl_SetBooleanObj')
             import :: c_int, c_ptr
@@ -2103,8 +2219,6 @@ module tcl
              type(c_ptr),            intent(in)        :: objv(*)
              character(kind=c_char), intent(in)        :: message
         end subroutine tcl_wrong_num_args_
-
-        ! void Tcl_ZlibStreamSetCompressionDictionary(Tcl_ZlibStream zhandle, Tcl_Obj *compressionDictionaryObj)
     end interface
 
     interface

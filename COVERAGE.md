@@ -241,7 +241,7 @@
 | `Tcl_GetBlocksFromStat`             | ✓     |
 | `Tcl_GetBoolean`                    | ✓     |
 | `Tcl_GetBooleanFromObj`             | ✓     |
-| `Tcl_GetByteArrayFromObj`           | –     |
+| `Tcl_GetByteArrayFromObj`           | ✓     |
 | `Tcl_GetChangeTimeFromStat`         | ✓     |
 | `Tcl_GetChannel`                    | –     |
 | `Tcl_GetChannelBufferSize`          | –     |
@@ -418,7 +418,7 @@
 | `Tcl_NRExprObj`                     | –     |
 | `Tcl_NewBignumObj`                  | –     |
 | `Tcl_NewBooleanObj`                 | –     |
-| `Tcl_NewByteArrayObj`               | –     |
+| `Tcl_NewByteArrayObj`               | ✓     |
 | `Tcl_NewDictObj`                    | ✓     |
 | `Tcl_NewDoubleObj`                  | ✓     |
 | `Tcl_NewInstanceMethod`             | –     |
@@ -507,8 +507,8 @@
 | `Tcl_SetAssocData`                  | –     |
 | `Tcl_SetBignumObj`                  | –     |
 | `Tcl_SetBooleanObj`                 | ✓     |
-| `Tcl_SetByteArrayLength`            | –     |
-| `Tcl_SetByteArrayObj`               | –     |
+| `Tcl_SetByteArrayLength`            | ✓     |
+| `Tcl_SetByteArrayObj`               | ✓     |
 | `Tcl_SetChannelBufferSize`          | –     |
 | `Tcl_SetChannelError`               | –     |
 | `Tcl_SetChannelErrorInterp`         | –     |

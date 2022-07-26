@@ -59,7 +59,7 @@ Furthermore, it is possible to build a single static library `libfortran-tcl86.a
 with [fpm](https://github.com/fortran-lang/fpm):
 
 ```
-$ fpm build --profile=release --c-flag="-I/usr/local/include/tcl8.6/ -L/usr/local/lib/tcl8.6/"
+$ fpm build --profile=release --c-flag="`pkg-config --cflags tcl86`"
 ```
 
 The include and library search paths have to point to the correct directories.
@@ -83,27 +83,21 @@ instead of `-ltcl86` on Linux). Tcl/Tk can either be linked statically
 (`libtcl86.a`, `libtk86.a`) or dynamically (`-ltcl86`, `-ltk86`).
 
 To create a shared library `libexample.so` with Tcl extensions written in
-Fortran, link against `libftcl86.a libftclstub86.a -ltclstub86`:
+Fortran, run:
 
 ```
-$ gfortran -DUSE_TCL_STUBS -fPIC -shared -o libexample.so \
-  -I/usr/local/include/tcl8.6/ -L/usr/local/lib/tcl8.6/ \
-  example.f90 libftcl86.a libftclstub86.a -ltclstub86
+$ gfortran -DUSE_TCL_STUBS -fPIC -shared -o libexample.so `pkg-config --cflags tcl86` \
+  example.f90 libftcl86.a libftclstub86.a `pkg-config --libs tcl86`
 ```
 
 To access the Tk toolkit from Fortran, link against `libftk86.a libftcl86.a
--ltk86 -ltcl86`:
+-ltk86 -ltcl86` (or, use `pkg-config`):
 
 ```
-$ gfortran -DUSE_TK_STUBS -I/usr/local/include/tcl8.6/ -I/usr/local/include/tk8.6/ \
-  -L/usr/local/lib/tcl8.6/ -L/usr/local/lib/tk8.6/ \
-  -o example example.f90 libftk86.a libftcl86.a -ltk86 -ltcl86
+$ gfortran -DUSE_TK_STUBS `pkg-config --cflags tk86` \
+  -o example example.f90 libftk86.a libftcl86.a `pkg-config --libs tk86`
 $ ./example
 ```
-
-Again, the include and library search paths for Tcl 8.6 and Tk 8.6, as well as
-the names of the libraries depend on the operating system and may differ (for
-instance, `-ltk8.6 -ltcl8.6` on Linux).
 
 ## Example
 The following basic example just invokes the Tcl interpreter from Fortran to
@@ -135,15 +129,10 @@ end program main
 Compile and link the example with:
 
 ```
-$ gfortran -I/usr/local/include/tcl8.6/ -L/usr/local/lib/tcl8.6/ \
-  -o example.f90 libftcl86.a -ltcl86
+$ gfortran `pkg-config --cflags tcl86` -o example.f90 libftcl86.a `pkg-config --libs tcl86`
 $ ./example
 Hello, from Tcl!
 ```
-
-On Linux, point `-I` to the directory of the Tcl header files, `-L` to the
-directory of the library files, and change `-ltcl86` to `-ltcl8.6`. On Microsoft
-Windows, link against `tcl86.dll` instead.
 
 ## Further Examples
 The following example programs are provided:
