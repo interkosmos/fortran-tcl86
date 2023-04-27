@@ -9,3 +9,6 @@ keywords = [ "tcl", "tk" ]
 
 [library]
 source-dir = "src"
+
+[install]
+library = true
