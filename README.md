@@ -26,11 +26,11 @@ There are some smaller differences to the original API:
 See [COVERAGE](COVERAGE.md) for a table of the bound procedures.
 
 ## Fortran Libraries
-| Library           | Description                                                        |
-|-------------------|--------------------------------------------------------------------|
-| `libftcl86.a`     | Bindings to Tcl (`libtcl86.a`)                                     |
-| `libftclstub86.a` | Bindings to Tcl Stubs for extensions in Fortran (`libtclstub86.a`) |
-| `libftk86.a`      | Bindings to Tk (`libtk86.a`)                                       |
+| Library           | Description                                                      |
+|-------------------|------------------------------------------------------------------|
+| `libftcl86.a`     | Bindings to Tcl (`libtcl86`)                                     |
+| `libftclstub86.a` | Bindings to Tcl Stubs for extensions in Fortran (`libtclstub86`) |
+| `libftk86.a`      | Bindings to Tk (`libtk86`)                                       |
 
 ## Build Instructions
 Tcl 8.6 and Tk 8.6 with development headers have to be present. On FreeBSD,
@@ -62,9 +62,8 @@ with [fpm](https://github.com/fortran-lang/fpm):
 $ fpm build --profile=release --c-flag="`pkg-config --cflags tcl86`"
 ```
 
-The include and library search paths have to point to the correct directories.
-Link against `libfortran-tcl86.a` instead of  `libftcl86.a`, `libftclstub86.a`,
-and `libftk86.a`.
+The include and library search paths in `--c-flags` have to point to the correct
+directories.
 
 ## Linking Tcl & Tk
 Linking depends on whether Fortran is called from Tcl or Tcl from Fortran.  To
@@ -119,7 +118,7 @@ program main
 
     ! Evaluate string as Tcl command.
     rc = tcl_eval_ex(interp, 'puts "Hello, from Tcl!"')
-    if (rc /= TCL_OK) print '("Error: Tcl_EvalEx failed")'
+    if (rc /= TCL_OK) print '("Error: Tcl_EvalEx() failed")'
 
     ! Delete Tcl interpreter.
     call tcl_delete_interp(interp)

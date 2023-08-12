@@ -263,7 +263,6 @@ module tcl
     public :: tcl_zlib_stream_get
     public :: tcl_zlib_stream_init
 
-    private :: copy
     private :: c_f_str_ptr
 
     integer, parameter :: c_unsigned_int = c_int
@@ -2226,7 +2225,7 @@ module tcl
             import :: c_ptr, c_size_t
             implicit none
             type(c_ptr), intent(in), value :: str
-            integer(c_size_t)              :: c_strlen
+            integer(kind=c_size_t)         :: c_strlen
         end function c_strlen
     end interface
 contains
@@ -2611,6 +2610,7 @@ contains
     function tcl_get_host_name() result(str)
         character(len=:), allocatable :: str
         type(c_ptr)                   :: ptr
+
         ptr = tcl_get_host_name_()
         call c_f_str_ptr(ptr, str)
         if (.not. allocated(str)) str = ''
@@ -3032,29 +3032,28 @@ contains
     ! **************************************************************************
     ! PRIVATE PROCEDURES
     ! **************************************************************************
-    pure function copy(a)
-        character, intent(in)  :: a(:)
-        character(len=size(a)) :: copy
-        integer(kind=i8)       :: i
-
-        do i = 1, size(a)
-            copy(i:i) = a(i)
-        end do
-    end function copy
-
     subroutine c_f_str_ptr(c_str, f_str)
-        !! Utility routine that copies a C string, passed as a C pointer, to a
-        !! Fortran string. On error, `f_str` is not allocated.
+        !! Copies a C string, passed as a C pointer, to a Fortran string.
         type(c_ptr),                   intent(in)  :: c_str
         character(len=:), allocatable, intent(out) :: f_str
-        character(kind=c_char), pointer            :: ptrs(:)
-        integer(kind=i8)                           :: sz
 
-        if (.not. c_associated(c_str)) return
-        sz = c_strlen(c_str)
-        if (sz < 0) return
-        call c_f_pointer(c_str, ptrs, [ sz ])
-        allocate (character(len=sz) :: f_str)
-        f_str = copy(ptrs)
+        character(kind=c_char), pointer :: ptrs(:)
+        integer(kind=c_size_t)          :: i, sz
+
+        copy_block: block
+            if (.not. c_associated(c_str)) exit copy_block
+            sz = c_strlen(c_str)
+            if (sz < 0) exit copy_block
+            call c_f_pointer(c_str, ptrs, [ sz ])
+            allocate (character(len=sz) :: f_str)
+
+            do i = 1, sz
+                f_str(i:i) = ptrs(i)
+            end do
+
+            return
+        end block copy_block
+
+        if (.not. allocated(f_str)) f_str = ''
     end subroutine c_f_str_ptr
 end module tcl

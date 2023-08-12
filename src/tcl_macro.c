@@ -1,5 +1,9 @@
 #include <tcl.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * C macro wrappers.
  */
@@ -33,3 +37,7 @@ void Tcl_SetHashValue_(Tcl_HashEntry *entryPtr, ClientData value)
 {
     Tcl_SetHashValue(entryPtr, value);
 }
+
+#ifdef __cplusplus
+}
+#endif
