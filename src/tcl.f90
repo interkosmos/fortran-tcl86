@@ -1725,7 +1725,7 @@ module tcl
             import :: c_int, c_ptr
             implicit none
             integer(kind=c_int), intent(in), value :: objc
-            type(c_ptr),         intent(in)        :: objv
+            type(c_ptr),         intent(in)        :: objv(*)
             type(c_ptr)                            :: tcl_new_list_obj
         end function tcl_new_list_obj
 

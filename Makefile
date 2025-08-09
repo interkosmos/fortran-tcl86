@@ -10,8 +10,8 @@ AR = ar
 # ==============================================================================
 # COMPILER, LINKER, AND ARCHIVER FLAGS
 # ==============================================================================
-CFLAGS  = -Wall `pkg-config --cflags tk86`
-FFLAGS  = -Wall -Wno-unused-dummy-argument `pkg-config --cflags tk86`
+CFLAGS  = `pkg-config --cflags tk86`
+FFLAGS  = `pkg-config --cflags tk86`
 ARFLAGS = rcs
 LDFLAGS = `pkg-config --libs-only-L tk86`
 
@@ -79,13 +79,13 @@ $(FS): $(LIBFTCL86)
 	$(FC) $(FFLAGS) $(LDFLAGS) -o $(FS) examples/fs/fs.f90 $(LIBFTCL86) $(LIBTCL86)
 
 $(LIBRARY): $(LIBFTCL86) $(LIBFTCLSTUB86)
-	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(LIBRARY) examples/library/hello.f90 $(LIBFTCL86) $(LIBFTCLSTUB86)
+	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(LIBRARY) examples/library/hello.f90 $(LIBFTCL86) $(LIBFTCLSTUB86) $(LIBTCL86)
 
 $(LINK): $(LIBFTCL86)
 	$(FC) $(FFLAGS) $(LDFLAGS) -o $(LINK) examples/link/link.f90 $(LIBFTCL86) $(LIBTCL86)
 
 $(NAMESPACE): $(LIBFTCL86) $(LIBFTCLSTUB86)
-	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(NAMESPACE) examples/namespace/fortran.f90 $(LIBFTCL86) $(LIBFTCLSTUB86)
+	$(FC) -DUSE_TCL_STUBS -shared -fPIC $(FFLAGS) $(LDFLAGS) -o $(NAMESPACE) examples/namespace/fortran.f90 $(LIBFTCL86) $(LIBFTCLSTUB86) $(LIBTCL86)
 
 $(RE2C): $(LIBFTCL86) $(LIBFTK86)
 	$(FC) -DUSE_TK_STUBS $(FFLAGS) $(LDFLAGS) -o $(RE2C) examples/re2c/re2c.f90 $(LIBFTCL86) $(LIBFTK86) $(LIBTK86)

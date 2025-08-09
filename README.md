@@ -1,4 +1,5 @@
 # fortran-tcl86 – Tcl/Tk 8.6 for Fortran 2018
+
 A work-in-progress Fortran 2018 ISO_C_BINDING interface library for
 interoperability with Tcl/Tk 8.6. This library allows you
 
@@ -26,6 +27,7 @@ There are some smaller differences to the original API:
 See [COVERAGE](COVERAGE.md) for a table of the bound procedures.
 
 ## Fortran Libraries
+
 | Library           | Description                                                      |
 |-------------------|------------------------------------------------------------------|
 | `libftcl86.a`     | Bindings to Tcl (`libtcl86`)                                     |
@@ -33,6 +35,7 @@ See [COVERAGE](COVERAGE.md) for a table of the bound procedures.
 | `libftk86.a`      | Bindings to Tk (`libtk86`)                                       |
 
 ## Build Instructions
+
 Tcl 8.6 and Tk 8.6 with development headers have to be present. On FreeBSD,
 install the packages with:
 
@@ -66,6 +69,7 @@ The include and library search paths in `--c-flags` have to point to the correct
 directories.
 
 ## Linking Tcl & Tk
+
 Linking depends on whether Fortran is called from Tcl or Tcl from Fortran.  To
 build a Fortran program in `example.f90` that invokes the Tcl interpreter, link
 against `libftcl86.a -ltcl86`:
@@ -99,6 +103,7 @@ $ ./example
 ```
 
 ## Example
+
 The following basic example just invokes the Tcl interpreter from Fortran to
 evaluate a character string:
 
@@ -134,6 +139,7 @@ Hello, from Tcl!
 ```
 
 ## Further Examples
+
 The following example programs are provided:
 
 * **config** – Uses Tcl as a configuration file format (run `config`).
@@ -154,4 +160,5 @@ $ make examples
 Change to the directory of an example before executing it.
 
 ## Licence
+
 ISC

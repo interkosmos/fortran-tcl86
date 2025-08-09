@@ -1,3 +1,13 @@
+#!/usr/bin/env tclsh8.6
+#
+# This Tcl script is read by binary `re2c` in the same directory.
+#
+# Run:
+#
+# $ ./re2c
+#
+package require Tk 8.6
+
 # Tk window settings.
 set title "Réaumur to Celsius"
 set font  "Helvetica 12"
@@ -6,8 +16,8 @@ set theme "classic"
 # Temperature values.
 global output
 
-set input  "0.0"    ;# Default input value.
-set output ""       ;# Default output value.
+set input  "0.0" ;# Default input value.
+set output ""    ;# Default output value.
 
 # Set theme (optional), one of: clam, alt, default, classic.
 ttk::style theme use $theme
@@ -36,13 +46,13 @@ foreach w [winfo children .frame] {
     grid configure $w -padx 0 -pady 5
 }
 
-focus .frame.input                  ;# Set initial focus to input widget.
-bind . <Return> {[list callback]}   ;# Add key binding.
+focus .frame.input                 ;# Set initial focus to input widget.
+bind . <Return> {[list callback]}  ;# Add key binding.
 
 # Prevent resizing of the window.
-update idletasks                    ;# Show window first to get correct size.
-set size [wm geometry .]            ;# Get current window size.
-regexp {(\d+)x(\d+)} $size all w h  ;# Extract width and height.
+update idletasks                   ;# Show window first to get correct size.
+set size [wm geometry .]           ;# Get current window size.
+regexp {(\d+)x(\d+)} $size all w h ;# Extract width and height.
 wm aspect . $w $h $w $h
 wm minsize . $w $h
 wm maxsize . $w $h
